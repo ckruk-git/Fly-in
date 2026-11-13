@@ -1,6 +1,6 @@
 import re
 
-allowed_zones = {"normal", "blocked", "restricted", "priority"}
+allowed_zones = {"normal", "blocked", "restricted", "priority"},
 
 class Hub:
     def __init__(self, 
