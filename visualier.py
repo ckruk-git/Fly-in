@@ -228,9 +228,8 @@ class Visualizer:
                 text_position = text.get_rect(center=(px, py - 75))
                 screen.blit(text, text_position)
                 screen.blit(self.drone_img, drone_position)
-
             pygame.display.flip()
-            pygame.time.delay(0)
+            pygame.time.delay(2)
 
     def draw_score(
         self,

@@ -36,8 +36,6 @@ class Connection:
 
 
 class ParseError(Exception):
-    """Błąd parsowania pliku wejściowego."""
-
     def __init__(self,
                  line_nbr: int,
                  message: str) -> None:
@@ -68,7 +66,6 @@ class Parser:
         key, rest = raw_line.split(":", 1)
         key = key.strip()
         rest = rest.strip()
-
         if key == "nb_drones":
             self.parse_nb_drones(rest, line_nbr)
         elif key == "start_hub":
@@ -100,7 +97,6 @@ class Parser:
         self.nb_drones = value
 
     def parse_hub(self, data: str, line_nbr: int, hub_type: str) -> None:
-
         data_brackets = re.findall(r"\[([^\]]*)\]", data)
         no_brackets = re.sub(r"\[[^\]]*\]", "", data).strip()
         parts = no_brackets.split()
@@ -139,7 +135,6 @@ class Parser:
         zone = data_dict.get("zone", "normal")
         color = data_dict.get("color", "none")
         max_drones_str = data_dict.get("max_drones", "1")
-
         if zone not in allowed_zones:
             raise ParseError(line_nbr, f"invalid zone type '{zone}'")
         try:
@@ -153,14 +148,12 @@ class Parser:
         if max_drones <= 0:
             raise ParseError(line_nbr, "max_drones must be positive")
         hub = Hub(name, x, y, zone, color, max_drones)
-
         if name in self.hubs:
             raise ParseError(line_nbr, f"duplicated hub name '{name}'")
         if self.start_hub is not None and self.start_hub.name == name:
             raise ParseError(line_nbr, f"duplicated hub name '{name}'")
         if self.end_hub is not None and self.end_hub.name == name:
             raise ParseError(line_nbr, f"duplicated hub name '{name}'")
-
         if hub_type == "start":
             if self.start_hub is not None:
                 raise ParseError(line_nbr, "start_hub defined twice")
@@ -207,22 +200,18 @@ class Parser:
         connection_splited = connection.split("-")
         a = connection_splited[0].strip()
         b = connection_splited[1].strip()
-
         known = set(self.hubs.keys())
         if self.start_hub is not None:
             known.add(self.start_hub.name)
         if self.end_hub is not None:
             known.add(self.end_hub.name)
-
         if a not in known:
             raise ParseError(line_nbr, f"unknown hub '{a}' in connection")
         if b not in known:
             raise ParseError(line_nbr, f"unknown hub '{b}' in connection")
-
         key = frozenset({a, b})
         if key in self._connection_keys:
             raise ParseError(line_nbr, f"connection '{a}-{b}' already defined")
-
         conn = Connection(a, b, max_cap)
         self.connections.append(conn)
         self._connection_keys.add(key)
@@ -241,15 +230,3 @@ class Parser:
         for hub in self.hubs.values():
             if ' ' in hub.color:
                 raise ParseError(0, "invalid color name")
-
-
-if __name__ == "__main__":
-    p = Parser()
-    p.parse_file("maps/medium/02_circular_loop.txt")
-    print("nb_drones:", p.nb_drones)
-    print("start:", p.start_hub.name if p.start_hub else None)
-    print("end:", p.end_hub.name if p.end_hub else None)
-    print("hubs:", list(p.hubs.keys()))
-    print("connections count:", len(p.connections))
-    for c in p.connections:
-        print(f"  {c.a}-{c.b} cap={c.max_link_capacity}")

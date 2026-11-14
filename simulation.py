@@ -104,11 +104,14 @@ class Simulation:
                 if next_hub.cur_occupancy >= next_hub.max_drones:
                     continue
             if (
+                next_hub.zone != "restricted" and
                 conn.cur_occupancy + conn.transit_occupancy
                 >= conn.max_link_capacity
             ):
                 continue
             if next_hub.zone == "restricted":
+                if conn.cur_occupancy + conn.transit_occupancy > conn.max_link_capacity:
+                    continue
                 drone.in_transit = True
                 conn.transit_occupancy += 1
                 drone.path_index += 1

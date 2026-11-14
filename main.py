@@ -51,7 +51,6 @@ def run_map(path: str) -> None:
     result = dijkstra(adjacency_list, hubs, p.start_hub.name, p.end_hub.name)
     if result:
         cost, best_path = result
-        print(f"Koszt: {cost}, ścieżka: {best_path}")
     paths = find_paths(adjacency_list, hubs, p.start_hub.name, p.end_hub.name)
     if not paths:
         print("Error: Path missing")
@@ -83,6 +82,7 @@ def menu() -> str | None:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
                 selected = (selected - 1) % len(MAPS)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                print(MAPS[selected][0])
                 return MAPS[selected][1]
         screen.fill((0, 0, 0))
         text = font.render("Choose map and press ENTER", True, (255, 255, 255))
